@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.2
+    container_name: es01
+    environment:
+      - "xpack.security.enabled=true"
+      - "discovery.type=single-node"
+      - "bootstrap.memory_lock=true"
+      - "ELASTIC_PASSWORD=${ES_PWD}"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - ${ES_PORT}:9200
+    networks:
+      - elastic
+
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    container_name: rabbitmq
+    networks:
+      - rabbitmq
+    ports:
+      - '${RMQ_PORT}:5672'
+      - '${RMQ_DB_PORT}:15672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RMQ_USR}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PWD}
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
+  rabbitmq:
+    driver: bridge

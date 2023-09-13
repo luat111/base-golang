@@ -1,0 +1,152 @@
+definitions:
+  interfaces.PaginateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/interfaces.PaginateResult'
+      errors: {}
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  interfaces.PaginateResult:
+    properties:
+      pagination:
+        $ref: '#/definitions/interfaces.PaginateTotal'
+      results:
+        items:
+          type: object
+        type: array
+    type: object
+  interfaces.PaginateTotal:
+    properties:
+      total:
+        type: integer
+    type: object
+  interfaces.QueryRequest-user_model_QueryUserSchema-user_model_OrderUserSchema:
+    properties:
+      orderFields:
+        $ref: '#/definitions/user_model.OrderUserSchema'
+      queryFields:
+        $ref: '#/definitions/user_model.QueryUserSchema'
+    type: object
+  user_model.CreateUserSchema:
+    properties:
+      age:
+        type: integer
+      full_name:
+        minLength: 4
+        type: string
+      password:
+        minLength: 4
+        type: string
+      username:
+        minLength: 4
+        type: string
+    required:
+    - full_name
+    - password
+    - username
+    type: object
+  user_model.OrderUserSchema:
+    properties:
+      age:
+        enum:
+        - asc
+        - desc
+        type: string
+      created_at:
+        enum:
+        - asc
+        - desc
+        type: string
+      full_name:
+        enum:
+        - asc
+        - desc
+        type: string
+      username:
+        enum:
+        - asc
+        - desc
+        type: string
+    type: object
+  user_model.QueryUserSchema:
+    properties:
+      age:
+        type: integer
+      full_name:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: c
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/user_model.CreateUserSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interfaces.PaginateResponse'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+  /user/listing:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: a
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: b
+        in: query
+        name: size
+        type: integer
+      - description: c
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/interfaces.QueryRequest-user_model_QueryUserSchema-user_model_OrderUserSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interfaces.PaginateResponse'
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

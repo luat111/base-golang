@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package blog;
+option go_package = "grpc/blog";
+
+message Blog {
+  string title =  1;
+  string content = 2;
+  int64 views = 3;
+
+}
+
+message CreateBlog {
+  Blog blog = 1;
+}
+
+message BlogRequest {
+  Blog blog = 1;
+}
+
+message BlogResponse {
+  string status = 1;
+  string message = 2;
+  repeated Blog blog = 3;
+}
+
+service BlogService {
+  rpc WriteBlog(CreateBlog) returns (BlogResponse);
+  rpc GetBlog(BlogRequest) returns (BlogResponse);
+}

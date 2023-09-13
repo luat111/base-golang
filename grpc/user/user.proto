@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package user;
+option go_package = "grpc/user";
+
+message User {
+  string name =  1;
+}
+
+message CreateUser {
+  User user = 1;
+}
+
+message UserRequest {
+  User user = 1;
+}
+
+message UserResponse {
+  string status = 1;
+  string message = 2;
+  repeated User user = 3;
+}
+
+service UserService {
+  rpc WriteUser(CreateUser) returns (UserResponse);
+  rpc GetUser(UserRequest) returns (UserResponse);
+}
